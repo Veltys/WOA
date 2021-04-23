@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
+import ctypes
+import os
+
 import numpy as np
 
 
@@ -53,3 +56,23 @@ def levi(x, y):
     b = ((x - 1) ** 2) * (1 + np.sin(3.0 * np.pi * y) ** 2)
     c = ((y - 1) ** 2) * (1 + np.sin(2.0 * np.pi * y) ** 2)
     return a + b + c
+
+
+def benchark2020(x):
+    libtest = ctypes.CDLL(os.path.dirname(os.path.abspath(__file__)) + os.sep + 'libbenchmark.' + ('dll' if os.name == 'nt' else 'so'))
+    libtest.cec20_bench.argtypes = (ctypes.c_size_t, ctypes.c_size_t, ctypes.POINTER(ctypes.c_double * len(x)), ctypes.c_ushort)
+    libtest.cec20_bench.restype = ctypes.c_double
+
+    return libtest
+
+
+def benchmark1(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 1)
+def benchmark2(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 2)
+def benchmark3(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 3)
+def benchmark4(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 4)
+def benchmark5(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 5)
+def benchmark6(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 6)
+def benchmark7(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 7)
+def benchmark8(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 8)
+def benchmark9(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 9)
+def benchmark10(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 10)

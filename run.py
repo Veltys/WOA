@@ -20,7 +20,7 @@ def parseClArgs():
     parser.add_argument("-c", type = float, default = None, dest = 'c', help = 'absolute solution constraint value, default: None, will use default constraints')
     parser.add_argument("-func", type = str, default = 'booth', dest = 'func', help = 'function to be optimized, default: booth; options: matyas, cross, eggholder, schaffer, booth')
     parser.add_argument("-r", type = float, default = 0.25, dest = 'r', help = 'resolution of function meshgrid, default: 0.25')
-    parser.add_argument("-t", type = float, default = 0.1, dest = 't', help = 'animate sleep time, lower values increase animation speed, default: 0.1')
+    # parser.add_argument("-t", type = float, default = 0.1, dest = 't', help = 'animate sleep time, lower values increase animation speed, default: 0.1')
     parser.add_argument("-max", default = False, dest = 'max', action = 'store_true', help = 'enable for maximization, default: False (minimization)')
 
     args = parser.parse_args()
@@ -33,8 +33,43 @@ def main(argv): # @UnusedVariable
     nSols = args.nsols
     nGens = args.ngens
 
-    funcs = { 'schaffer': src.funcs.schaffer, 'eggholder': src.funcs.eggholder, 'booth': src.funcs.booth, 'matyas': src.funcs.matyas, 'cross': src.funcs.crossInTray, 'levi': src.funcs.levi }
-    funcConstraints = { 'schaffer': 100.0, 'eggholder': 512.0, 'booth': 10.0, 'matyas': 10.0, 'cross': 10.0, 'levi': 10.0 }
+    funcs = {
+        'schaffer': src.funcs.schaffer,
+        'eggholder': src.funcs.eggholder,
+        'booth': src.funcs.booth,
+        'matyas': src.funcs.matyas,
+        'cross': src.funcs.crossInTray,
+        'levi': src.funcs.levi,
+        'benchmark1': src.funcs.benchmark1,
+        'benchmark2': src.funcs.benchmark2,
+        'benchmark3': src.funcs.benchmark3,
+        'benchmark4': src.funcs.benchmark4,
+        'benchmark5': src.funcs.benchmark5,
+        'benchmark6': src.funcs.benchmark6,
+        'benchmark7': src.funcs.benchmark7,
+        'benchmark8': src.funcs.benchmark8,
+        'benchmark9': src.funcs.benchmark9,
+        'benchmark10': src.funcs.benchmark10,
+    }
+
+    funcConstraints = {
+        'schaffer': 100.0,
+        'eggholder': 512.0,
+        'booth': 10.0,
+        'matyas': 10.0,
+        'cross': 10.0,
+        'levi': 10.0,
+        'benchmark1': 100,
+        'benchmark2': 100,
+        'benchmark3': 100,
+        'benchmark4': 100,
+        'benchmark5': 100,
+        'benchmark6': 100,
+        'benchmark7': 100,
+        'benchmark8': 100,
+        'benchmark9': 100,
+        'benchmark10': 100,
+    }
 
     if args.func in funcs:
         func = funcs[args.func]
