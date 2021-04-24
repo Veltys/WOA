@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class WhaleOptimization():
     """class implements the whale optimization algorithm as found at
     http://www.alimirjalili.com/WOA.html
@@ -20,6 +21,10 @@ class WhaleOptimization():
     def getSolutions(self):
         """return solutions"""
         return self._sols
+
+
+    def getBestSolutions(self):
+        return [ s[0] for s in self._bestSolutions ]
 
 
     def optimize(self):

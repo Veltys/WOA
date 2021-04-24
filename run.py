@@ -129,6 +129,9 @@ def main(argv): # @UnusedVariable
         if args.verbose:
             optAlg.printBestSolutions()
 
+        # TODO: Generar el csv
+        print(optAlg.getBestSolutions())
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
