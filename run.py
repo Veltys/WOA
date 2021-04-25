@@ -98,24 +98,36 @@ def main(argv): # @UnusedVariable
 
     maximize = args.max
 
-    optAlg = WhaleOptimization(optFunc, constraints, nSols, b, a, aStep, maximize)
-    # solutions = optAlg.getSolutions()
-    # colors = [[1.0, 1.0, 1.0] for _ in range(nSols)]
+    for i in range(args.nRuns):
+        if args.verbose:
+            print(f'Run {i + 1} of {args.nRuns}')
 
-    '''
-    aScatter = AnimateScatter(constraints[0][0],
-                               constraints[0][1],
-                               constraints[1][0],
-                               constraints[1][1],
-                               solutions, colors, optFunc, args.r, args.t)
-    '''
-
-    for _ in range(nGens):
-        optAlg.optimize()
+        optAlg = WhaleOptimization(optFunc, constraints, nSols, b, a, aStep, maximize)
         # solutions = optAlg.getSolutions()
-        # aScatter.update(solutions)
+        # colors = [[1.0, 1.0, 1.0] for _ in range(nSols)]
 
-    optAlg.printBestSolutions()
+        '''
+        aScatter = AnimateScatter(constraints[0][0],
+                                   constraints[0][1],
+                                   constraints[1][0],
+                                   constraints[1][1],
+                                   solutions, colors, optFunc, args.r, args.t)
+        '''
+
+        evals = 0
+
+        for _ in range(args.nGens):
+            optAlg.optimize()
+            # solutions = optAlg.getSolutions()
+            # aScatter.update(solutions)
+
+            evals += args.nsols
+
+            if evals >= args.maxEvals:
+                break
+
+        if args.verbose:
+            optAlg.printBestSolutions()
 
 
 if __name__ == '__main__':
