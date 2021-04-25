@@ -5,8 +5,9 @@
 import argparse
 import sys
 
-from src.animate_scatter import AnimateScatter
 import src.funcs
+
+# from src.animate_scatter import AnimateScatter
 from src.whale_optimization import WhaleOptimization
 
 
@@ -60,19 +61,21 @@ def main(argv): # @UnusedVariable
     maximize = args.max
 
     optAlg = WhaleOptimization(optFunc, constraints, nSols, b, a, aStep, maximize)
-    solutions = optAlg.getSolutions()
-    colors = [[1.0, 1.0, 1.0] for _ in range(nSols)]
+    # solutions = optAlg.getSolutions()
+    # colors = [[1.0, 1.0, 1.0] for _ in range(nSols)]
 
+    '''
     aScatter = AnimateScatter(constraints[0][0],
                                constraints[0][1],
                                constraints[1][0],
                                constraints[1][1],
                                solutions, colors, optFunc, args.r, args.t)
+    '''
 
     for _ in range(nGens):
         optAlg.optimize()
-        solutions = optAlg.getSolutions()
-        aScatter.update(solutions)
+        # solutions = optAlg.getSolutions()
+        # aScatter.update(solutions)
 
     optAlg.printBestSolutions()
 
