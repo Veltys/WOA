@@ -3,8 +3,11 @@
 
 
 import argparse
+import csv
+from itertools import chain
 import os
 import sys
+import time
 
 # from src.animate_scatter import AnimateScatter
 import src.funcs
@@ -25,6 +28,7 @@ def parseClArgs():
     parser.add_argument("-maxEvals", default = 500000, dest = 'maxEvals', help = 'maximum evaluations, default: 500.000')
     parser.add_argument("-nRuns", type = int, default = 30, dest = 'nRuns', help = 'number of runs, default: 30')
     parser.add_argument("-v", default = False, dest = 'verbose', help = 'enable for verbosity, default: False (no verbose)')
+    parser.add_argument("-export", default = True, dest = 'export', help = 'enable for export data to CSV, default: True (export)')
 
     args = parser.parse_args()
 
@@ -32,6 +36,8 @@ def parseClArgs():
 
 
 def main(argv): # @UnusedVariable
+    NOMBRE_ARCHIVO = f'experiment-{time.strftime("%Y-%m-%d-%H-%M-%S")}.csv'
+
     args = parseClArgs()
 
     funcs = {
@@ -93,39 +99,74 @@ def main(argv): # @UnusedVariable
     a = args.a
     aStep = a / args.nGens
 
-    for i in range(args.nRuns):
+    optimizer = 'WOA'
+
+    if args.export:
+        # CSV file header
+        header = []
+
+        for i in range(args.nGens):
+            header.append(f'It{i + 1}')
+
+    try:
+        if args.export:
+            out = open(f'.{os.sep}{NOMBRE_ARCHIVO}', 'a')
+
+    except IOError:
+        print(f'Error de apertura del archivo <{NOMBRE_ARCHIVO}>')
+        print(f'ERROR: imposible abrir el archivo <{NOMBRE_ARCHIVO}>', file = sys.stderr)
+
+        exit(os.EX_OSFILE) # @UndefinedVariable
+
+    else:
         if args.verbose:
-            print(f'Run {i + 1} of {args.nRuns}')
+            print(f'{optimizer} is optimizing with {optFunc.__name__}')
 
-        optAlg = WhaleOptimization(optFunc, constraints, args.nSols, b, a, aStep, args.max)
-        # solutions = optAlg.getSolutions()
-        # colors = [[1.0, 1.0, 1.0] for _ in range(args.nSols)]
+        if args.export:
+            csvOut = csv.writer(out, delimiter = ',')
 
-        '''
-        aScatter = AnimateScatter(constraints[0][0],
-                                   constraints[0][1],
-                                   constraints[1][0],
-                                   constraints[1][1],
-                                   solutions, colors, optFunc, args.r, args.t)
-        '''
+            csvOut.writerow(chain.from_iterable([['Optimizer', 'objfname', 'ExecutionTime'], header]))
 
-        evals = 0
+        for i in range(args.nRuns):
+            if args.verbose:
+                print(f'Run {i + 1} of {args.nRuns}')
 
-        for _ in range(args.nGens):
-            optAlg.optimize()
+            timerStart = time.time()
+
+            optAlg = WhaleOptimization(optFunc, constraints, args.nSols, b, a, aStep, args.max)
             # solutions = optAlg.getSolutions()
-            # aScatter.update(solutions)
+            # colors = [[1.0, 1.0, 1.0] for _ in range(args.nSols)]
 
-            evals += args.nSols
+            '''
+            aScatter = AnimateScatter(constraints[0][0],
+                                       constraints[0][1],
+                                       constraints[1][0],
+                                       constraints[1][1],
+                                       solutions, colors, optFunc, args.r, args.t)
+            '''
 
-            if evals >= args.maxEvals:
-                break
+            evals = 0
 
-        if args.verbose:
-            optAlg.printBestSolutions()
+            for _ in range(args.nGens):
+                optAlg.optimize()
+                # solutions = optAlg.getSolutions()
+                # aScatter.update(solutions)
 
-        # TODO: Generar el csv
-        print(optAlg.getBestSolutions())
+                evals += args.nSols
+
+                if evals >= args.maxEvals:
+                    break
+
+            timerEnd = time.time()
+
+            if args.verbose:
+                optAlg.printBestSolutions()
+
+            if args.export:
+                csvOut.writerow(chain.from_iterable([[optimizer, optFunc.__name__, timerEnd - timerStart], optAlg.getBestSolutions()]))
+
+        if args.export:
+            out.close()
 
 
 if __name__ == '__main__':
