@@ -14,7 +14,7 @@ import src.funcs
 from src.whale_optimization import WhaleOptimization
 
 
-def parseClArgs():
+def parseClArgs(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("-nsols", type = int, default = 50, dest = 'nSols', help = 'number of solutions per generation, default: 50')
     parser.add_argument("-ngens", type = int, default = 150000, dest = 'nGens', help = 'number of generations, default: 30')
@@ -29,8 +29,9 @@ def parseClArgs():
     parser.add_argument("-nRuns", type = int, default = 30, dest = 'nRuns', help = 'number of runs, default: 30')
     parser.add_argument("-v", default = False, dest = 'verbose', help = 'enable for verbosity, default: False (no verbose)')
     parser.add_argument("-export", default = True, dest = 'export', help = 'enable for export data to CSV, default: True (export)')
+    parser.add_argument("-d", type = int, default = 10, dest = 'dim', help = 'dimensions, default: 10')
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     return args
 
@@ -38,7 +39,7 @@ def parseClArgs():
 def main(argv): # @UnusedVariable
     NOMBRE_ARCHIVO = f'experiment-{time.strftime("%Y-%m-%d-%H-%M-%S")}.csv'
 
-    args = parseClArgs()
+    args = parseClArgs(argv)
 
     funcs = {
         'schaffer': src.funcs.schaffer,
