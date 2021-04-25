@@ -4,6 +4,7 @@
 
 import argparse
 import sys
+import os
 
 from src.animate_scatter import AnimateScatter
 import src.funcs
@@ -37,14 +38,16 @@ def main(argv): # @UnusedVariable
         optFunc = funcs[args.func]
     else:
         print('Missing supplied function ' + args.func + ' definition. Ensure function defintion exists or use command line options.')
-        return
+
+        exit(os.EX_USAGE) # @UndefinedVariable
 
     if args.c is None:
         if args.func in funcConstraints:
             args.c = funcConstraints[args.func]
         else:
             print('Missing constraints for supplied function ' + args.func + '. Define constraints before use or supply via command line.')
-            return
+
+            exit(os.EX_USAGE) # @UndefinedVariable
 
     constraints = [[-args.c, args.c], [-args.c, args.c]]
 
