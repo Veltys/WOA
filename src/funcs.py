@@ -58,21 +58,80 @@ def levi(x, y):
     return a + b + c
 
 
+def rebuild(x, y):
+    z = []
+
+    for i, _ in enumerate(x):
+        z.append([x[i], y[i]])
+
+    z = np.array(z)
+
+    return z.flatten()
+
+
 def benchark2020(x):
-    libtest = ctypes.CDLL(os.path.dirname(os.path.abspath(__file__)) + os.sep + 'libbenchmark.' + ('dll' if os.name == 'nt' else 'so'))
+    libtest = ctypes.CDLL(os.path.dirname(os.path.abspath(__file__)) + os.sep + '..' + os.sep + 'libbenchmark.' + ('dll' if os.name == 'nt' else 'so'))
     libtest.cec20_bench.argtypes = (ctypes.c_size_t, ctypes.c_size_t, ctypes.POINTER(ctypes.c_double * len(x)), ctypes.c_ushort)
     libtest.cec20_bench.restype = ctypes.c_double
 
     return libtest
 
 
-def benchmark1(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 1)
-def benchmark2(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 2)
-def benchmark3(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 3)
-def benchmark4(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 4)
-def benchmark5(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 5)
-def benchmark6(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 6)
-def benchmark7(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 7)
-def benchmark8(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 8)
-def benchmark9(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 9)
-def benchmark10(x): return benchark2020(x).libtest.cec20_bench(1, x.size, (ctypes.c_double * len(x))(*x), 10)
+def benchmark1(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 1)
+
+
+def benchmark2(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 2)
+
+
+def benchmark3(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 3)
+
+
+def benchmark4(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 4)
+
+
+def benchmark5(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 5)
+
+
+def benchmark6(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 6)
+
+
+def benchmark7(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 7)
+
+
+def benchmark8(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 8)
+
+
+def benchmark9(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 9)
+
+
+def benchmark10(x, y):
+    z = rebuild(x, y)
+
+    return benchark2020(z).cec20_bench(z.size, 2, (ctypes.c_double * len(z))(*z), 10)
