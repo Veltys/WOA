@@ -76,7 +76,12 @@ class WhaleOptimization():
 
     def _rankSolutions(self):
         """find best solution"""
-        fitness = self._optFunc(self._sols[:, 0], self._sols[:, 1])
+
+        if len(self._constraints) == 2:
+            fitness = self._optFunc(self._sols[:, 0], self._sols[:, 1])
+        else:
+            fitness = self._optFunc(self._sols)
+
         solFitness = [(f, s) for f, s in zip(fitness, self._sols)]
 
         # best solution is at the front of the list
@@ -98,13 +103,12 @@ class WhaleOptimization():
 
 
     def _computeA(self):
-        r = np.random.uniform(0.0, 1.0, size = 2)
+        r = np.random.uniform(0.0, 1.0, size = len(self._constraints))
         return (2.0 * np.multiply(self._a, r)) - self._a
 
 
-    @staticmethod
-    def _computeC():
-        return 2.0 * np.random.uniform(0.0, 1.0, size = 2)
+    def _computeC(self):
+        return 2.0 * np.random.uniform(0.0, 1.0, size = len(self._constraints))
 
 
     def _encircle(self, sol, bestSol, a):
@@ -130,5 +134,5 @@ class WhaleOptimization():
 
     def _attack(self, sol, bestSol):
         d = np.linalg.norm(bestSol - sol)
-        l = np.random.uniform(-1.0, 1.0, size = 2)
+        l = np.random.uniform(-1.0, 1.0, size = len(self._constraints))
         return np.multiply(np.multiply(d, np.exp(self._b * l)), np.cos(2.0 * np.pi * l)) + bestSol

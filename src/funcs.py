@@ -59,42 +59,31 @@ def levi(x, y):
     return a + b + c
 
 
-def rebuild(x, y):
-    z = []
-
-    for i, _ in enumerate(x):
-        z.append([x[i], y[i]])
-
-    z = np.array(z)
-
-    return z.flatten()
-
-
 def benchark2020(x, benchmark_id):
         libtest = ctypes.CDLL(os.path.dirname(os.path.abspath(__file__)) + os.sep + 'libbenchmark.' + ('dll' if os.name == 'nt' else 'so'))
-        libtest.cec20_bench.argtypes = (ctypes.c_size_t, ctypes.c_size_t, ctypes.POINTER(ctypes.c_double * len(x)), ctypes.c_ushort)
+        libtest.cec20_bench.argtypes = (ctypes.c_size_t, ctypes.c_size_t, ctypes.POINTER(ctypes.c_double * x.size), ctypes.c_ushort)
         libtest.cec20_bench.restype = ctypes.c_void_p
         libtest.free_array.argtypes = (ctypes.c_void_p,)
         libtest.free_array.restype = None
 
-        arr = libtest.cec20_bench(2, x.size, (ctypes.c_double * len(x))(*x), benchmark_id)
+        arr = libtest.cec20_bench(x.shape[0], x.shape[1], (ctypes.c_double * x.size)(*np.concatenate(np.transpose(x)).flat), benchmark_id)
 
-        res = ctypes.cast(arr, ctypes.POINTER(ctypes.c_double * 1))
+        res = ctypes.cast(arr, ctypes.POINTER(ctypes.c_double * x.shape[0]))
 
-        res = copy(res[0][0])
+        res = copy(res[0])
 
         libtest.free_array(arr)
 
         return res
 
 
-def benchmark1(x, y): return benchark2020(rebuild(x, y), 1)
-def benchmark2(x, y): return benchark2020(rebuild(x, y), 2)
-def benchmark3(x, y): return benchark2020(rebuild(x, y), 3)
-def benchmark4(x, y): return benchark2020(rebuild(x, y), 4)
-def benchmark5(x, y): return benchark2020(rebuild(x, y), 5)
-def benchmark6(x, y): return benchark2020(rebuild(x, y), 6)
-def benchmark7(x, y): return benchark2020(rebuild(x, y), 7)
-def benchmark8(x, y): return benchark2020(rebuild(x, y), 8)
-def benchmark9(x, y): return benchark2020(rebuild(x, y), 9)
-def benchmark10(x, y): return benchark2020(rebuild(x, y), 10)
+def benchmark1(x): return benchark2020(x, 1)
+def benchmark2(x): return benchark2020(x, 2)
+def benchmark3(x): return benchark2020(x, 3)
+def benchmark4(x): return benchark2020(x, 4)
+def benchmark5(x): return benchark2020(x, 5)
+def benchmark6(x): return benchark2020(x, 6)
+def benchmark7(x): return benchark2020(x, 7)
+def benchmark8(x): return benchark2020(x, 8)
+def benchmark9(x): return benchark2020(x, 9)
+def benchmark10(x): return benchark2020(x, 10)

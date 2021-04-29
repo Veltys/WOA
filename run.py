@@ -6,6 +6,7 @@ import argparse
 import csv
 from itertools import chain
 import os
+from re import match
 import sys
 import time
 
@@ -29,7 +30,7 @@ def parseClArgs(argv):
     parser.add_argument("-nRuns", type = int, default = 30, dest = 'nRuns', help = 'number of runs, default: 30')
     parser.add_argument("-v", default = False, dest = 'verbose', help = 'enable for verbosity, default: False (no verbose)')
     parser.add_argument("-export", default = True, dest = 'export', help = 'enable for export data to CSV, default: True (export)')
-    parser.add_argument("-d", type = int, default = 10, dest = 'dim', help = 'dimensions, default: 10')
+    parser.add_argument("-d", type = int, default = 10, dest = 'dim', help = 'dimensions for external benchmarks family, default: 10')
 
     args = parser.parse_args(argv)
 
@@ -94,7 +95,13 @@ def main(argv): # @UnusedVariable
 
             exit(os.EX_USAGE) # @UndefinedVariable
 
-    constraints = [[-args.c, args.c], [-args.c, args.c]]
+    if match(r"^benchmark\d{1,2}$", args.func):
+        constraints = []
+
+        for _ in range(args.dim):
+            constraints.append([-args.c, args.c])
+    else:
+        constraints = [[-args.c, args.c], [-args.c, args.c]]
 
     b = args.b
     a = args.a
