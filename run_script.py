@@ -82,14 +82,14 @@ def posprocesar(dimensiones):
             # Número de columna a leer
             numColumna = int(round((dimensiones ** (j / 5 - 3)) * 150000, 0))
 
-            elemento = linea[numColumna + 2]
+            try: # Algunas líneas podrían no existir, debido a los criterios de parada
+                elemento = linea[numColumna + 2]
 
-            # Algunas líneas podrían no existir, debido a los criterios de parada
-            if elemento != '':
-                res[j][i] = elemento
-            else:
-                # En tal caso, se copia el resultado de la línea anterior
+            except IndexError: # En tal caso, se copia el resultado de la línea anterior
                 res[j][i] = res[j - 1][i]
+
+            else:
+                res[j][i] = elemento
 
     os.remove(archivo)
 
