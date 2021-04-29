@@ -10,6 +10,7 @@ from re import match
 import sys
 import time
 
+import progressbar
 # from src.animate_scatter import AnimateScatter
 import src.funcs
 from src.whale_optimization import WhaleOptimization
@@ -28,9 +29,11 @@ def parseClArgs(argv):
     parser.add_argument("-max", default = False, dest = 'max', action = 'store_true', help = 'enable for maximization, default: False (minimization)')
     parser.add_argument("-maxEvals", default = 500000, dest = 'maxEvals', help = 'maximum evaluations, default: 500.000')
     parser.add_argument("-nRuns", type = int, default = 30, dest = 'nRuns', help = 'number of runs, default: 30')
-    parser.add_argument("-v", default = False, dest = 'verbose', help = 'enable for verbosity, default: False (no verbose)')
-    parser.add_argument("-export", default = True, dest = 'export', help = 'enable for export data to CSV, default: True (export)')
+    parser.add_argument("-v", default = False, dest = 'verbose', action = 'store_true', help = 'enable for verbosity, default: False (no verbose)')
+    parser.add_argument("-export", default = True, dest = 'export', action = 'store_false', help = 'enable for export data to CSV, default: True (export)')
     parser.add_argument("-d", type = int, default = 10, dest = 'dim', help = 'dimensions for external benchmarks family, default: 10')
+    parser.add_argument('-s', type = bool, default = True, dest = 'progress', action = 'store_false', help = 'show progress bar, default: True')
+
 
     args = parser.parse_args(argv)
 
@@ -135,9 +138,14 @@ def main(argv): # @UnusedVariable
 
             csvOut.writerow(chain.from_iterable([['Optimizer', 'objfname', 'ExecutionTime'], header]))
 
-        for i in range(args.nRuns):
-            if args.verbose:
-                print(f'Run {i + 1} of {args.nRuns}')
+        for _ in range(args.nRuns):
+            if args.progress:
+                pb = progressbar.ProgressBar(max_value = args.maxEvals)
+
+            evals = 0
+
+            if args.progress:
+                pb.update(evals)
 
             timerStart = time.time()
 
@@ -153,8 +161,6 @@ def main(argv): # @UnusedVariable
                                        solutions, colors, optFunc, args.r, args.t)
             '''
 
-            evals = 0
-
             for _ in range(args.nGens):
                 optAlg.optimize()
                 # solutions = optAlg.getSolutions()
@@ -162,8 +168,18 @@ def main(argv): # @UnusedVariable
 
                 evals += args.nSols
 
+                if args.progress:
+                    pb.update(evals)
+
                 if evals >= args.maxEvals:
+                    if args.progress:
+                        # pb.update(evals)
+                        pb.finish()
+
                     break
+
+            if args.progress:
+                pb.finish()
 
             timerEnd = time.time()
 
