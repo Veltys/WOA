@@ -21,7 +21,7 @@ def parseClArgs(argv):
     parser.add_argument("-a", type = float, default = 2.0, dest = 'a', help = 'woa algorithm specific parameter, controls search spread default: 2.0')
     parser.add_argument("-b", type = float, default = 0.5, dest = 'b', help = 'woa algorithm specific parameter, controls spiral, default: 0.5')
     parser.add_argument("-c", type = float, default = None, dest = 'c', help = 'absolute solution constraint value, default: None, will use default constraints')
-    parser.add_argument("-func", type = str, default = 'booth', dest = 'func', help = 'function to be optimized, default: booth; options: matyas, cross, eggholder, schaffer, booth')
+    parser.add_argument("-func", type = str, default = 'booth', dest = 'func', choices = ['matyas', 'cross', 'eggholder', 'schaffer', 'booth', 'benchmark1', 'benchmark2', 'benchmark3', 'benchmark4', 'benchmark5', 'benchmark6', 'benchmark7', 'benchmark8', 'benchmark9', 'benchmark10'], help = 'function to be optimized, default: booth')
     parser.add_argument("-r", type = float, default = 0.25, dest = 'r', help = 'resolution of function meshgrid, default: 0.25')
     # parser.add_argument("-t", type = float, default = 0.1, dest = 't', help = 'animate sleep time, lower values increase animation speed, default: 0.1')
     parser.add_argument("-max", default = False, dest = 'max', action = 'store_true', help = 'enable for maximization, default: False (minimization)')
