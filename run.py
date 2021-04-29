@@ -18,21 +18,21 @@ from src.whale_optimization import WhaleOptimization
 
 def parseClArgs(argv):
     parser = argparse.ArgumentParser()
-    parser.add_argument("-nsols", type = int, default = 50, dest = 'nSols', help = 'number of solutions per generation, default: 50')
-    parser.add_argument("-ngens", type = int, default = 150000, dest = 'nGens', help = 'number of generations, default: 30')
-    parser.add_argument("-a", type = float, default = 2.0, dest = 'a', help = 'woa algorithm specific parameter, controls search spread default: 2.0')
-    parser.add_argument("-b", type = float, default = 0.5, dest = 'b', help = 'woa algorithm specific parameter, controls spiral, default: 0.5')
-    parser.add_argument("-c", type = float, default = None, dest = 'c', help = 'absolute solution constraint value, default: None, will use default constraints')
-    parser.add_argument("-func", type = str, default = 'booth', dest = 'func', choices = ['matyas', 'cross', 'eggholder', 'schaffer', 'booth', 'benchmark1', 'benchmark2', 'benchmark3', 'benchmark4', 'benchmark5', 'benchmark6', 'benchmark7', 'benchmark8', 'benchmark9', 'benchmark10'], help = 'function to be optimized, default: booth')
-    parser.add_argument("-r", type = float, default = 0.25, dest = 'r', help = 'resolution of function meshgrid, default: 0.25')
-    # parser.add_argument("-t", type = float, default = 0.1, dest = 't', help = 'animate sleep time, lower values increase animation speed, default: 0.1')
-    parser.add_argument("-max", default = False, dest = 'max', action = 'store_true', help = 'enable for maximization, default: False (minimization)')
-    parser.add_argument("-maxEvals", default = 500000, dest = 'maxEvals', help = 'maximum evaluations, default: 500.000')
-    parser.add_argument("-nRuns", type = int, default = 30, dest = 'nRuns', help = 'number of runs, default: 30')
-    parser.add_argument("-v", default = False, dest = 'verbose', action = 'store_true', help = 'enable for verbosity, default: False (no verbose)')
-    parser.add_argument("-export", default = True, dest = 'export', action = 'store_false', help = 'enable for export data to CSV, default: True (export)')
-    parser.add_argument("-d", type = int, default = 10, dest = 'dim', help = 'dimensions for external benchmarks family, default: 10')
-    parser.add_argument('-s', type = bool, default = True, dest = 'progress', action = 'store_false', help = 'show progress bar, default: True')
+    parser.add_argument('-nsols', type = int, default = 50, dest = 'nSols', help = 'number of solutions per generation, default: 50')
+    parser.add_argument('-ngens', type = int, default = 150000, dest = 'nGens', help = 'number of generations, default: 150000')
+    parser.add_argument('-a', type = float, default = 2.0, dest = 'a', help = 'woa algorithm specific parameter, controls search spread default: 2.0')
+    parser.add_argument('-b', type = float, default = 0.5, dest = 'b', help = 'woa algorithm specific parameter, controls spiral, default: 0.5')
+    parser.add_argument('-c', type = float, default = None, dest = 'c', help = 'absolute solution constraint value, default: None, will use default constraints')
+    parser.add_argument('-func', type = str, default = 'booth', dest = 'func', choices = ['matyas', 'cross', 'eggholder', 'schaffer', 'booth', 'benchmark1', 'benchmark2', 'benchmark3', 'benchmark4', 'benchmark5', 'benchmark6', 'benchmark7', 'benchmark8', 'benchmark9', 'benchmark10'], help = 'function to be optimized, default: booth')
+    parser.add_argument('-r', type = float, default = 0.25, dest = 'r', help = 'resolution of function meshgrid, default: 0.25')
+    # parser.add_argument('-t', type = float, default = 0.1, dest = 't', help = 'animate sleep time, lower values increase animation speed, default: 0.1')
+    parser.add_argument('-max', default = False, dest = 'max', action = 'store_true', help = 'enable for maximization, default: False (minimization)')
+    parser.add_argument('-e', '--maxEvals', type = int, default = 500000, dest = 'maxEvals', help = 'maximum evaluations, default: 500.000')
+    parser.add_argument('-nRuns', type = int, default = 30, dest = 'nRuns', help = 'number of runs, default: 30')
+    parser.add_argument('-v', '--verbose', default = False, dest = 'verbose', action = 'store_true', help = 'enable for verbosity, default: False (no verbose)')
+    parser.add_argument('-x', '--export', default = True, dest = 'export', action = 'store_false', help = 'enable for prevent exporting data to CSV')
+    parser.add_argument('-d', type = int, default = 10, dest = 'dim', help = 'dimensions for external benchmarks family, default: 10')
+    parser.add_argument('-p', '--progress', default = True, dest = 'progress', action = 'store_false', help = 'don\'t show progress bar')
 
 
     args = parser.parse_args(argv)
@@ -184,7 +184,8 @@ def main(argv): # @UnusedVariable
             timerEnd = time.time()
 
             if args.verbose:
-                optAlg.printBestSolutions()
+                # optAlg.printBestSolutions()
+                print(f'Best solutions: {optAlg.getBestSolutions()}\n\n')
 
             if args.export:
                 csvOut.writerow(chain.from_iterable([[optimizer, optFunc.__name__, timerEnd - timerStart], optAlg.getBestSolutions()]))
