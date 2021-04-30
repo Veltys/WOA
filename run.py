@@ -90,7 +90,7 @@ def main(argv): # @UnusedVariable
     else:
         print('Missing supplied function ' + args.func + ' definition. Ensure function defintion exists or use command line options.')
 
-        exit(errno.EPERM)
+        sys.exit(errno.EPERM)
 
     if args.c is None:
         if args.func in funcConstraints:
@@ -98,7 +98,7 @@ def main(argv): # @UnusedVariable
         else:
             print('Missing constraints for supplied function ' + args.func + '. Define constraints before use or supply via command line.')
 
-            exit(errno.EPERM)
+            sys.exit(errno.EPERM)
 
     if match(r"^benchmark\d{1,2}$", args.func):
         constraints = []
@@ -129,7 +129,7 @@ def main(argv): # @UnusedVariable
         print(f'Error de apertura del archivo <{NOMBRE_ARCHIVO}>')
         print(f'ERROR: imposible abrir el archivo <{NOMBRE_ARCHIVO}>', file = sys.stderr)
 
-        exit(errno.EIO)
+        sys.exit(errno.EIO)
 
     else:
         if args.verbose:
