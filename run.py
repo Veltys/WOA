@@ -42,6 +42,87 @@ def parseClArgs(argv):
     return args
 
 
+def woa(args, optFunc, csvOut):
+    optimizer = 'WOA'
+
+    if match(r"^benchmark\d{1,2}$", args.func):
+        constraints = []
+
+        for _ in range(args.dim):
+            constraints.append([-args.c, args.c])
+    else:
+        constraints = [[-args.c, args.c], [-args.c, args.c]]
+
+    b = args.b
+    a = args.a
+    aStep = a / args.nGens
+
+    if args.verbose:
+        print(f'{optimizer} is optimizing with {optFunc.__name__}')
+
+    for _ in range(args.nRuns):
+        if args.progress:
+            pb = progressbar.ProgressBar(max_value=args.maxEvals)
+
+        evals = 0
+
+        if args.progress:
+            pb.update(evals)
+
+        timerStart = time.time()
+
+        optAlg = WhaleOptimization(optFunc, constraints, args.nSols, b, a, aStep, args.max)
+
+        # solutions = optAlg.getSolutions()
+
+        # colors = [[1.0, 1.0, 1.0] for _ in range(args.nSols)]
+
+        '''
+
+    aScatter = AnimateScatter(constraints[0][0],
+
+                               constraints[0][1],
+
+                               constraints[1][0],
+
+                               constraints[1][1],
+
+                               solutions, colors, optFunc, args.r, args.t)
+
+    '''
+
+        for _ in range(args.nGens):
+            optAlg.optimize()
+
+            # solutions = optAlg.getSolutions()
+
+            # aScatter.update(solutions)
+
+            evals += args.nSols
+
+            if args.progress:
+                pb.update(evals)
+
+            if evals >= args.maxEvals:
+                if args.progress:
+                    # pb.update(evals)
+                    pb.finish()
+
+                break
+
+        if args.progress:
+            pb.finish()
+
+        timerEnd = time.time()
+
+        if args.verbose:
+            # optAlg.printBestSolutions()
+            print(f'Best solutions: {optAlg.getBestSolutions()}\n\n')
+
+        if args.export:
+            csvOut.writerow(chain.from_iterable([[optimizer, optFunc.__name__, timerEnd - timerStart], optAlg.getBestSolutions()]))
+
+
 def main(argv): # @UnusedVariable
     NOMBRE_ARCHIVO = f'experiment-{time.strftime("%Y-%m-%d-%H-%M-%S")}.csv'
 
@@ -100,27 +181,6 @@ def main(argv): # @UnusedVariable
 
             sys.exit(errno.EPERM)
 
-    if match(r"^benchmark\d{1,2}$", args.func):
-        constraints = []
-
-        for _ in range(args.dim):
-            constraints.append([-args.c, args.c])
-    else:
-        constraints = [[-args.c, args.c], [-args.c, args.c]]
-
-    b = args.b
-    a = args.a
-    aStep = a / args.nGens
-
-    optimizer = 'WOA'
-
-    if args.export:
-        # CSV file header
-        header = []
-
-        for i in range(args.nGens):
-            header.append(f'It{i + 1}')
-
     try:
         if args.export:
             out = open(f'.{os.sep}{NOMBRE_ARCHIVO}', 'a')
@@ -132,65 +192,17 @@ def main(argv): # @UnusedVariable
         sys.exit(errno.EIO)
 
     else:
-        if args.verbose:
-            print(f'{optimizer} is optimizing with {optFunc.__name__}')
-
         if args.export:
-            csvOut = csv.writer(out, delimiter = ',')
+            # CSV file header
+            header = []
 
+            for i in range(args.nGens):
+                header.append(f'It{i + 1}')
+
+            csvOut = csv.writer(out, delimiter = ',')
             csvOut.writerow(chain.from_iterable([['Optimizer', 'objfname', 'ExecutionTime'], header]))
 
-        for _ in range(args.nRuns):
-            if args.progress:
-                pb = progressbar.ProgressBar(max_value = args.maxEvals)
-
-            evals = 0
-
-            if args.progress:
-                pb.update(evals)
-
-            timerStart = time.time()
-
-            optAlg = WhaleOptimization(optFunc, constraints, args.nSols, b, a, aStep, args.max)
-            # solutions = optAlg.getSolutions()
-            # colors = [[1.0, 1.0, 1.0] for _ in range(args.nSols)]
-
-            '''
-            aScatter = AnimateScatter(constraints[0][0],
-                                       constraints[0][1],
-                                       constraints[1][0],
-                                       constraints[1][1],
-                                       solutions, colors, optFunc, args.r, args.t)
-            '''
-
-            for _ in range(args.nGens):
-                optAlg.optimize()
-                # solutions = optAlg.getSolutions()
-                # aScatter.update(solutions)
-
-                evals += args.nSols
-
-                if args.progress:
-                    pb.update(evals)
-
-                if evals >= args.maxEvals:
-                    if args.progress:
-                        # pb.update(evals)
-                        pb.finish()
-
-                    break
-
-            if args.progress:
-                pb.finish()
-
-            timerEnd = time.time()
-
-            if args.verbose:
-                # optAlg.printBestSolutions()
-                print(f'Best solutions: {optAlg.getBestSolutions()}\n\n')
-
-            if args.export:
-                csvOut.writerow(chain.from_iterable([[optimizer, optFunc.__name__, timerEnd - timerStart], optAlg.getBestSolutions()]))
+        woa(args, optFunc, csvOut)
 
         if args.export:
             out.close()
