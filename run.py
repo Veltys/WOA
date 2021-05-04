@@ -195,6 +195,9 @@ def main(argv): # @UnusedVariable
         if args.export:
             out.close()
 
+        if args.progress:
+            print()
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
