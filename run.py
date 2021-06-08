@@ -2,6 +2,18 @@
 # -*- coding: utf-8 -*-
 
 
+'''!
+    @file:           run.py
+    @brief:          Main program
+
+    @author:         Rafael Carlos Méndez Rodríguez (i82meror)
+    @date:           2021-05-13
+    @version:        1.4.1
+    @usage:          python3 run_script.py
+    @note:           Use flag -h to see optional commands and help
+'''
+
+
 import argparse
 import csv
 import errno
@@ -19,6 +31,13 @@ from src.whale_optimization import WhaleOptimization
 
 
 def parseClArgs(argv):
+    '''! Procesa los argumentos pasados al programa
+    
+        @param argv:    Vector de argumentos
+    
+        @return:        Argumentos procesados
+    '''
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-nsols', type = int, default = 50, dest = 'nSols', help = 'number of solutions per generation, default: 50')
     parser.add_argument('-ngens', type = int, default = 150000, dest = 'nGens', help = 'number of generations, default: 150000')
@@ -43,6 +62,13 @@ def parseClArgs(argv):
 
 
 def woa(args, optFunc, csvOut):
+    '''! Ejecuta el algoritmo WOA
+    
+        @param args:    Argumentos ya procesados
+        @param optFunc: Función de optimización
+        @param csvOut:  Archivo de salida
+    '''
+
     optimizer = 'WOA'
 
     if match(r"^benchmark\d{1,2}$", args.func):
@@ -124,6 +150,13 @@ def woa(args, optFunc, csvOut):
 
 
 def main(argv): # @UnusedVariable
+    '''! Ejecuta el algoritmo WOA y exporta, de estar configurado así, los resultados a formato CSV
+    
+        @param argv:    Vector de argumentos
+    
+        @return:        Código de retorno
+    '''
+
     NOMBRE_ARCHIVO = f'experiment-{time.strftime("%Y-%m-%d-%H-%M-%S")}.csv'
 
     args = parseClArgs(argv)
